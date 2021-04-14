@@ -11,7 +11,8 @@ fileprivate struct DialogTitle {
     var promptTitle = ""
 }
 struct NavigationBarView<Content: View>: View {
-  
+//    @ObservedObject var cloud = Cloud.shared
+
     let content: Content
     
     init(@ViewBuilder content: () -> Content) {
@@ -20,8 +21,10 @@ struct NavigationBarView<Content: View>: View {
     @State private var showingInputAlert = false
     @State private var showingSyncToast = false
     @State private var showingUploadToast = false
+//    @State private var syncdb_img = "arrow.clockwise.icloud.fill"
     @State var en_name: String? = nil
     @State var zh_name: String? = nil
+    let itemWith = CGFloat(40)
     var body: some View {
         NavigationView {
             VStack{
@@ -32,6 +35,14 @@ struct NavigationBarView<Content: View>: View {
                         ToolbarItem(direction: .left) {
                         Label("", systemImage: "arrow.clockwise.icloud.fill")
                             .foregroundColor(.white)
+                            .frame(width: itemWith, height: 30, alignment: .center)
+//                            .onChange(of: cloud.isSyncdb, perform: { (isSyncdb) in
+//                                if isSyncdb {
+//                                    syncdb_img = "icloud.and.arrow.up.fill"
+//                                } else {
+//                                    syncdb_img = "arrow.clockwise.icloud.fill"
+//                                }
+//                            })
                             .onTapGesture {
                                 Cloud.syncdb { (error) in
                                     showingSyncToast = true
@@ -40,6 +51,7 @@ struct NavigationBarView<Content: View>: View {
                                     } else {
                                         DialogTitle.shared.promptTitle = "同步成功"
                                     }
+                                    
                                     WordManager.shared.fetch()
                                 }
                             }
@@ -50,6 +62,7 @@ struct NavigationBarView<Content: View>: View {
                         ToolbarItem(direction: .right) {
                             Label("", systemImage: "icloud.and.arrow.up.fill")
                                 .foregroundColor(.white)
+                                .frame(width: itemWith, height: 30, alignment: .center)
                                 .onTapGesture {
                                     Cloud.uploadDB { (error) in
                                         showingUploadToast = true
@@ -65,9 +78,9 @@ struct NavigationBarView<Content: View>: View {
                                 }
                         }
                         ToolbarItem(direction: .right) {
-                                                       
                             Label("", systemImage: "plus.rectangle.fill")
                                 .foregroundColor(.white)
+                                .frame(width: itemWith, height: 30, alignment: .center)
                                 .onTapGesture {
                                     showingInputAlert = true
                                 }.sheet(isPresented: $showingInputAlert) {
@@ -95,9 +108,7 @@ extension View {
     func navigationSetting() -> some View {
         #if os(macOS)
         return self
-        #else
-        
-        
+        #else        
         return self.navigationBarTitleDisplayMode(.large)
         #endif
     }
