@@ -72,7 +72,7 @@ struct NavigationBarView<Content: View>: View {
                                     showingInputAlert = true
                                 }.sheet(isPresented: $showingInputAlert) {
                                     InputDialog(prompt:  "输入单词" , value1: $en_name, value2: $zh_name)
-                                }.onChange(of: [en_name,zh_name]) { (array) in
+                                }.onChange(of: [en_name]) { (array) in
                                     let word = Word()
                                     word.en_name = en_name
                                     word.zh_name = zh_name
