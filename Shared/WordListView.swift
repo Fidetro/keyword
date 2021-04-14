@@ -21,6 +21,12 @@ struct WordListView: View {
                     if let zh_name = word.zh_name {
                         Text(zh_name)
                     }
+                }.contextMenu {
+                    Button(action: {
+                        delete(at: word)
+                    }) {
+                        Text("删除")
+                    }
                 }
             }.onDelete(perform: delete)
         }.listStyle(PlainListStyle())
@@ -28,9 +34,21 @@ struct WordListView: View {
         
     }
     func delete(at offsets: IndexSet) {
-        manager.words.remove(atOffsets: offsets)
-        
+        offsets.forEach{ index in
+            let word = manager.words[index]
+            word.delete()
+            manager.words.remove(at: index)
+            Cloud.uploadDB()
+        }
     }
+    func delete(at word: Word) {        
+        if let index = manager.words.firstIndex(of: word) {
+            word.delete()
+            manager.words.remove(at: index)
+            Cloud.uploadDB()
+        }
+    }
+
 }
 
 struct WordListView_Previews: PreviewProvider {

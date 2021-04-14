@@ -47,7 +47,7 @@ struct NavigationBarView<Content: View>: View {
                                 Dialog(prompt: DialogTitle.shared.promptTitle)
                             }
                         }
-                        ToolbarItem(direction: .left) {
+                        ToolbarItem(direction: .right) {
                             Label("", systemImage: "icloud.and.arrow.up.fill")
                                 .foregroundColor(.white)
                                 .onTapGesture {
