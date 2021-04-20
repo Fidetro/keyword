@@ -33,15 +33,20 @@ struct KVCloud {
                 newRecord.setValue(value, forKey: key)
                 self.container.publicCloudDatabase.save(newRecord, completionHandler: completionHandler)
                 self.container.publicCloudDatabase.save(newRecord) { (record, error) in
-                    if let error = error {
-                        debugPrintLog(error)
+                    OperationQueue.main.addOperation {
+                        if let error = error {
+                            debugPrintLog(error)
+                        }
                     }
-                    
                 }
                 return
             }
             record.setValue(value, forKey: key)
-            self.container.publicCloudDatabase.save(record, completionHandler: completionHandler)
+            self.container.publicCloudDatabase.save(record) { (record, error) in
+                OperationQueue.main.addOperation {
+                    completionHandler(record,error)
+                }
+            }
         }
         
         
@@ -54,7 +59,6 @@ struct KVCloud {
             (results, error) -> Void in
             debugPrintLog(results?.count)
             assert((results?.count ?? 0)<=1)
-            
             OperationQueue.main.addOperation {
                 if let completionHandler = completionHandler {
                     completionHandler(results?.first,error)
@@ -65,8 +69,10 @@ struct KVCloud {
     
     func object(for key:CKRecord.FieldKey, completionHandler : ((__CKRecordObjCValue?,Error?)->())?=nil ) {
         select { (record, error) in
-            if let completionHandler = completionHandler {
-                completionHandler(record?.object(forKey: key),error)
+            OperationQueue.main.addOperation {                
+                if let completionHandler = completionHandler {
+                    completionHandler(record?.object(forKey: key),error)
+                }
             }
         }
     }

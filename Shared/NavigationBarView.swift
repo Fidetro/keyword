@@ -22,7 +22,7 @@ fileprivate struct DialogTitle {
     var promptTitle = ""
 }
 struct NavigationBarView<Content: View>: View {
-//    @ObservedObject var cloud = Cloud.shared
+    @ObservedObject var cloud = Cloud.shared
 
     @State fileprivate var sheet :Sheets?
     let content: Content
@@ -31,7 +31,7 @@ struct NavigationBarView<Content: View>: View {
         self.content = content()
     }
 
-//    @State private var syncdb_img = "arrow.clockwise.icloud.fill"
+    @State private var syncdb_img = "icloud.and.arrow.up.fill"
     @State var en_name: String? = nil
     @State var zh_name: String? = nil
     let itemWith = CGFloat(40)
@@ -61,25 +61,21 @@ struct NavigationBarView<Content: View>: View {
     }
     func leftSyncItem() -> some ToolbarContent {
         ToolbarItem(direction: .left) {
-        Label("", systemImage: "arrow.clockwise.icloud.fill")
+            Label("", systemImage: cloud.isSyncdb ? "arrow.2.circlepath":"arrow.clockwise.icloud.fill")
             .foregroundColor(.white)
             .frame(width: itemWith, height: 30, alignment: .center)
-//                            .onChange(of: cloud.isSyncdb, perform: { (isSyncdb) in
-//                                if isSyncdb {
-//                                    syncdb_img = "icloud.and.arrow.up.fill"
-//                                } else {
-//                                    syncdb_img = "arrow.clockwise.icloud.fill"
-//                                }
-//                            })
             .onTapGesture {
+                if cloud.isSyncdb {
+                    return
+                }
                 Cloud.syncdb { (error) in
-                    sheet = .sync
+                    
                     if let error = error {
                         DialogTitle.shared.promptTitle = "\(error)"
                     } else {
                         DialogTitle.shared.promptTitle = "同步成功"
                     }
-                    
+                    sheet = .sync
                     WordManager.shared.fetch()
                 }
             }
@@ -87,17 +83,21 @@ struct NavigationBarView<Content: View>: View {
     }
     func rightUploadItem() -> some ToolbarContent {
         ToolbarItem(direction: .right) {
-            Label("", systemImage: "icloud.and.arrow.up.fill")
+            Label("", systemImage: cloud.isUploaddb ? "arrow.2.circlepath":"icloud.and.arrow.up.fill")
                 .foregroundColor(.white)
                 .frame(width: itemWith, height: 30, alignment: .center)
                 .onTapGesture {
+                    if cloud.isUploaddb {
+                        return
+                    }
                     Cloud.uploadDB { (error) in
-                        sheet = .upload
+                        
                         if let error = error {
                             DialogTitle.shared.promptTitle = "\(error)"
                         } else {
                             DialogTitle.shared.promptTitle = "上传成功"
                         }
+                        sheet = .upload
                     }
                 }
         }
@@ -131,8 +131,9 @@ extension View {
     func navigationSetting() -> some View {
         #if os(macOS)
         return self
-        #else        
-        return self.navigationBarTitleDisplayMode(.large)
+        #else
+        //不可以用.large,在iOS上.sheet弹出后，再次点击导航栏无效，需要往下拖动后才有用
+        return self.navigationBarTitleDisplayMode(.inline)
         #endif
     }
 }

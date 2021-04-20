@@ -46,17 +46,17 @@ class Cloud:ObservableObject {
     
     static func uploadDB(completion:((_ error: Error?)->())?=nil) {
         do{
-            shared.isSyncdb = true
+            shared.isUploaddb = true
             let data = try Data(contentsOf: FFDB.share.connection().databasePathURL())
-            Cloud.cloud.upsert(key: "database", value: data) { (record, error) in
+            Cloud.cloud.upsert(key: "database", value: data) { (record, error) in                
                 debugPrintLog(error)
-                shared.isSyncdb = false
+                shared.isUploaddb = false
                 completion?(error)
                 
             }
         }catch{
             debugPrintLog(error)
-            shared.isSyncdb = false
+            shared.isUploaddb = false
             completion?(error)
         }
     }
