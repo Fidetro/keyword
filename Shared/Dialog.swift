@@ -43,14 +43,14 @@ struct InputDialog: View {
             TextField("中文", text: $fieldValue2)
                 .frame(width: 200, alignment: .center)
             HStack {
-            Button("OK") {
-                self.value1 = fieldValue1
-                self.value2 = fieldValue2
-                self.presentationMode.wrappedValue.dismiss()
-            }
-            Button("Cancel") {
-                self.presentationMode.wrappedValue.dismiss()
-            }
+                Button("OK") {
+                    self.value1 = fieldValue1
+                    self.value2 = fieldValue2
+                    self.presentationMode.wrappedValue.dismiss()
+                }.padding(EdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 16))
+                Button("Cancel") {
+                    self.presentationMode.wrappedValue.dismiss()
+                }.padding(EdgeInsets.init(top: 0, leading: 16, bottom: 0, trailing: 0))
             }.padding()
         }
         .padding()
