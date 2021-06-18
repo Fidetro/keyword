@@ -13,19 +13,21 @@ struct WordListView: View {
     var body: some View {
         List {
             ForEach(manager.words,id: \.self) { word in
-                HStack{
-                    if let en_name = word.en_name {
-                        Text(en_name)
-                    }
-                    
-                    if let zh_name = word.zh_name {
-                        Text(zh_name)
-                    }
-                }.contextMenu {
-                    Button(action: {
-                        delete(at: word)
-                    }) {
-                        Text("删除")
+                NavigationLink(destination: Text(word.en_name ?? "")) {
+                    HStack{
+                        if let en_name = word.en_name {
+                            Text(en_name)
+                        }
+                        
+                        if let zh_name = word.zh_name {
+                            Text(zh_name)
+                        }
+                    }.contextMenu {
+                        Button(action: {
+                            delete(at: word)
+                        }) {
+                            Text("删除")
+                        }
                     }
                 }
             }.onDelete(perform: delete)
@@ -48,7 +50,7 @@ struct WordListView: View {
             Cloud.uploadDB()
         }
     }
-
+    
 }
 
 struct WordListView_Previews: PreviewProvider {
